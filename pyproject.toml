@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "patho-engine-synoptic"
+version = "2.0.0"
+description = "PathoAgent Synoptic: Autonomous Surgical Pathology Synoptic Completeness & Biomarker Triager"
+readme = "README.md"
+authors = [{ name = "Dr. Abu Suraih Sakhri", email = "abusuraih@example.com" }]
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+patho-engine-synoptic = "patho_agent_synoptic.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/abusuraihsakhri/patho-engine-synoptic"
+Repository = "https://github.com/abusuraihsakhri/patho-engine-synoptic.git"
