@@ -5,10 +5,31 @@ import argparse
 import csv
 import json
 import sys
+from pathlib import Path
 from .models import ClinicalCasePayload
 from .agents import PathologyDirectorCoordinator
 
 coordinator = PathologyDirectorCoordinator()
+
+
+def _resolve_safe_path(file_path: str, must_exist: bool = False) -> Path:
+    """Resolve a path safely, preventing directory traversal attacks."""
+    try:
+        resolved = Path(file_path).resolve()
+    except (OSError, ValueError) as e:
+        raise ValueError(f"Invalid path '{file_path}': {e}")
+
+    cwd = Path.cwd().resolve()
+    if not str(resolved).startswith(str(cwd)):
+        raise ValueError(
+            f"Path '{file_path}' resolves outside the working directory. "
+            "Directory traversal is not permitted."
+        )
+
+    if must_exist and not resolved.exists():
+        raise FileNotFoundError(f"File not found: {resolved}")
+
+    return resolved
 
 
 def main(argv=None):
@@ -68,7 +89,10 @@ def main(argv=None):
         return 0
 
     if args.command == "batch":
-        with open(args.input, mode="r", encoding="utf-8-sig") as f:
+        input_path = _resolve_safe_path(args.input, must_exist=True)
+        output_path = _resolve_safe_path(args.output, must_exist=False)
+
+        with open(input_path, mode="r", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             fieldnames = list(reader.fieldnames or [])
             rows = list(reader)
@@ -92,11 +116,11 @@ def main(argv=None):
             row_dict["consensus_summary"] = dossier["consensus_summary"]
             out_rows.append(row_dict)
 
-        with open(args.output, mode="w", encoding="utf-8", newline="") as f:
+        with open(output_path, mode="w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=out_fields)
             writer.writeheader()
             writer.writerows(out_rows)
-        print(f"Batch processed {len(out_rows)} records -> {args.output}")
+        print(f"Batch processed {len(out_rows)} records -> {output_path}")
         return 0
 
     if args.command == "serve":

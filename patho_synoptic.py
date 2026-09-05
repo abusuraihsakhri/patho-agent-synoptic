@@ -11,7 +11,6 @@ License: MIT
 import argparse
 import csv
 import datetime
-import json
 import sys
 import uuid
 from typing import Dict, Any, List, Optional

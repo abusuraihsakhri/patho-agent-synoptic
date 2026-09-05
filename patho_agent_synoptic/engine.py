@@ -3,7 +3,6 @@ Clinical Algorithmic Engine & Guideline Rules for PathoAgent Synoptic: Autonomou
 Domain: Digital Pathology
 Standard: CAP Cancer Protocols & ASCO/CAP 2023
 """
-import math
 from typing import Dict, Any, List, Optional
 from .models import ClinicalCasePayload, AgentAlert, UrgencyLevel, ClinicalIntegrityStatus
 

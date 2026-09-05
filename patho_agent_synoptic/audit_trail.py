@@ -5,6 +5,7 @@ HMAC-SHA256 secured logging with blockchain-anchored integrity verification.
 import hashlib
 import hmac
 import json
+import os
 import datetime
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
@@ -36,8 +37,16 @@ class AuditEntry:
 class TamperEvidentAuditTrail:
     """HMAC-SHA256 secured audit trail with hash chaining."""
 
-    def __init__(self, secret_key: str = "patho-synoptic-audit-key-2024"):
-        self.secret_key = secret_key
+    def __init__(self, secret_key: Optional[str] = None):
+        key = secret_key or os.getenv("AUDIT_SECRET_KEY")
+        if not key:
+            raise ValueError(
+                "AUDIT_SECRET_KEY environment variable is required. "
+                "Set a cryptographically random key before starting the application."
+            )
+        if len(key) < 16:
+            raise ValueError("AUDIT_SECRET_KEY must be at least 16 characters long.")
+        self.secret_key = key
         self.chains: Dict[str, List[AuditEntry]] = {}
         self.last_hashes: Dict[str, str] = {}
 

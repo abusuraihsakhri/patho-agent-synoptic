@@ -37,36 +37,51 @@
 
 ## 💻 CLI Quickstart & Usage
 
-### 1. Guided Interactive Mode
+### 1. Run a Single Task Evaluation
 ```bash
-python cli.py
+python cli.py audit --task-id TASK-001 --target KEY-01 --primary 28.5 --secondary 14.2 --critical --status DISCORDANT
 ```
 
-### 2. Direct Parameterized Evaluation
+### 2. Query the Supervisory Chat
 ```bash
-python cli.py --task-id <value> --target <value> --primary <value> --secondary <value>
+python cli.py chat "What is the system status?"
 ```
 
-### Parameter Reference
-- `--task-id`: Specifies input measurement or parameter value.
-- `--target`: Specifies input measurement or parameter value.
-- `--primary`: Specifies input measurement or parameter value.
-- `--secondary`: Specifies input measurement or parameter value.
-- `--critical`: Specifies input measurement or parameter value.
-- `--status`: Specifies input measurement or parameter value.
-- `--input`: Specifies input measurement or parameter value.
-- `--output`: Specifies input measurement or parameter value.
+### 3. Batch Process CSV Records
+```bash
+python cli.py batch -i sample.csv -o results.csv
+```
+
+### 4. Verify Audit Trail Integrity
+```bash
+python cli.py verify-audit
+```
+
+### 5. Launch the FastAPI REST Server
+```bash
+python cli.py serve --host 127.0.0.1 --port 8000
+```
+
+### CLI Command Reference
+
+| Command | Description | Key Flags |
+|:--------|:------------|:----------|
+| `audit` | Run single task evaluation | `--task-id`, `--target`, `--primary`, `--secondary`, `--critical`, `--status` |
+| `chat` | Query supervisory assistant | `query` (positional) |
+| `batch` | Batch process CSV records | `-i/--input`, `-o/--output` |
+| `verify-audit` | Verify HMAC audit trail integrity | — |
+| `serve` | Launch FastAPI REST server | `--host`, `--port` |
 
 ### Input Data Schema
 
 | Field | Description | Requirement |
 |:------|:------------|:------------|
-| `case_id` | Parameter / observation metric | Required |
-| `patient_synthetic_id` | Parameter / observation metric | Required |
-| `metric_primary` | Parameter / observation metric | Required |
-| `metric_secondary` | Parameter / observation metric | Required |
-| `is_stat` | Parameter / observation metric | Required |
-| `status_flag` | Parameter / observation metric | Required |
+| `task_id` | Unique task/case identifier | Required |
+| `target_identifier` | Entity or specimen key | Required |
+| `primary_metric` | Primary domain measurement | Required |
+| `secondary_metric` | Secondary kinetic/confidence score | Optional (default: 0.0) |
+| `status_descriptor` | Status code or phenotype | Optional (default: "NOMINAL") |
+| `is_critical_flag` | Emergency escalation trigger | Optional (default: false) |
 
 ---
 
@@ -80,25 +95,46 @@ python cli.py --task-id <value> --target <value> --primary <value> --secondary <
 
 ---
 
+## 🔧 Prerequisites & Environment Variables
+
+The following environment variable is **required** for cryptographic audit trail operation:
+
+| Variable | Required | Description |
+|:---------|:---------|:------------|
+| `AUDIT_SECRET_KEY` | Yes | Secret key for HMAC-SHA256 audit trail signing (min 16 characters) |
+
+Generate a secure key:
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
 ## 🧪 Testing & Verification
 
 Run the automated test suite:
 
 ```bash
-pytest -v
+AUDIT_SECRET_KEY=test-key-for-testing-only-12345 pytest -v
 ```
 
 Execute high-throughput batch simulation benchmarks:
 
 ```bash
-python simulator.py --tasks 1000 --concurrency 8
+python simulator.py 1000
 ```
 
 ---
 
 ## 🐳 Container Deployment
 
+### Docker Compose (Recommended)
+Create a `.env` file with your audit secret key:
+```bash
+echo "AUDIT_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_hex(32))')" > .env
+docker compose up --build
+```
+
+### Docker Direct
 ```bash
 docker build -t patho-agent-synoptic .
-docker run -p 8000:8000 patho-agent-synoptic
+docker run -e AUDIT_SECRET_KEY=your-secret-key -p 8000:8000 patho-agent-synoptic
 ```
