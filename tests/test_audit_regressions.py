@@ -12,6 +12,7 @@ from agents.supervisor import SystemSupervisor
 from agents.llm_factory import LLMFactory
 from cli import _parse_bool as parse_root_bool, _resolve_safe_path as root_safe_path, main as root_main
 from patho_agent_synoptic.cli import _parse_bool as parse_package_bool, main as package_main
+from patho_agent_synoptic.audit_trail import TamperEvidentAuditTrail
 
 
 def test_audit_rejects_tampered_signed_field():
@@ -44,6 +45,23 @@ def test_audit_log_is_defensive_copy():
     trail.get_trail()[0]["actor"] = "interloper"
     assert trail.verify_integrity()
     assert trail.get_trail()[0]["actor"] == "tester"
+
+
+
+def test_packaged_audit_chain_detects_sequence_tampering():
+    audit = TamperEvidentAuditTrail(secret_key="test-key-for-package-audit")
+    entry = audit.log_event("CASE-01", "EVALUATION", {"synthetic": True})
+    assert audit.verify_chain("CASE-01")["valid"]
+    assert audit.get_audit_log("CASE-01", limit=0) == []
+    entry.sequence = 99
+    assert not audit.verify_chain("CASE-01")["valid"]
+
+
+def test_packaged_audit_chain_detects_last_hash_tampering():
+    audit = TamperEvidentAuditTrail(secret_key="test-key-for-package-audit")
+    audit.log_event("CASE-01", "EVALUATION", {"synthetic": True})
+    audit.last_hashes["CASE-01"] = "tampered"
+    assert not audit.verify_chain("CASE-01")["valid"]
 
 
 @pytest.mark.parametrize("parse", [parse_root_bool, parse_package_bool])
