@@ -38,12 +38,12 @@ jobs:
       run: |
         pytest -v
 
-    - name: Security SAST & Zero-PHI Audit
+    - name: Audit-chain Smoke Check
       env:
-        AUDIT_SECRET_KEY: ci-test-key-for-github-actions-2026
+        AUDIT_SECRET_KEY: test-key-for-ci-only-not-for-production
       run: |
         python -c "
-        from agents.base import PHIGuard, AuditLogger
+        from agents.base import AuditLogger
         assert AuditLogger.verify_integrity() is True
-        print('Security & Zero-PHI Audit Passed!')
+        print('Audit-chain smoke check passed')
         "
