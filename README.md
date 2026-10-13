@@ -52,7 +52,7 @@ printf 'AUDIT_SECRET_KEY=%s\n' "$(python -c 'import secrets; print(secrets.token
 docker compose up --build
 ~~~
 
-Compose binds port 8000 on the host. Restrict network exposure; use only synthetic data.
+Compose binds 127.0.0.1:8000 on the host by default. Use only synthetic data.
 
 ## Security and data handling
 
