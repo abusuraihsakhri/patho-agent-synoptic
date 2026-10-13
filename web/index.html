@@ -1,236 +1,105 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patho Engine Synoptic — Operations Console</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #090d16;
-            --card: #111827;
-            --border: #1f293d;
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.25);
-            --text: #f3f4f6;
-            --text-muted: #9ca3af;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #10b981;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding: 2rem;
-            min-height: 100vh;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .header-title h1 { font-size: 1.6rem; font-weight: 700; color: #fff; }
-        .header-title p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
-        .badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: var(--accent-glow);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 1.5rem;
-        }
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .card h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; }
-        input, select, textarea {
-            width: 100%;
-            padding: 0.65rem 0.9rem;
-            background: #0d1322;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: #fff;
-            font-family: inherit;
-            font-size: 0.9rem;
-        }
-        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
-        .btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 0.7rem 1.4rem;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            width: 100%;
-        }
-        .btn:hover { background: #2563eb; }
-        .terminal {
-            background: #060911;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: #10b981;
-            height: 380px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-        .metrics-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .metric-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-        }
-        .metric-val { font-size: 1.4rem; font-weight: 700; color: #fff; margin-top: 0.25rem; }
-        .metric-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Local demonstration of three transparent, rule-based pathology workflow checks.">
+  <title>Patho Agent Synoptic · Rule Demonstration</title>
+  <style>
+    :root { color-scheme:dark; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#0a1020; color:#eef3ff }
+    * { box-sizing:border-box }
+    body { max-width:1120px; padding:30px 22px 65px; margin:auto; line-height:1.5 }
+    h1 { font-size:clamp(1.5rem,3.5vw,2.25rem); margin:0 0 6px }
+    h2 { font-size:1.1rem; margin:0 0 18px }
+    p { margin:0 0 14px }
+    .sub,.note { color:#b7c5da }
+    .eyebrow { color:#82b7ff; font-size:.78rem; letter-spacing:.12em; font-weight:700; text-transform:uppercase; margin-bottom:8px }
+    .info { border:1px solid #506484; border-left:4px solid #73a8fa; background:#15243b; border-radius:8px; padding:14px 18px; margin:22px 0 }
+    .info strong { display:block; margin-bottom:4px }
+    .layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.06fr); gap:18px }
+    .panel { padding:24px; background:#131e31; border:1px solid #35435a; border-radius:13px; min-width:0 }
+    label { display:block; font-weight:600; font-size:.88rem; margin:0 0 7px }
+    .field { margin-bottom:17px }
+    input:not([type="checkbox"]) { background:#0a1323; border:1px solid #71809b; color:#f1f5ff; border-radius:7px; width:100%; padding:11px 12px; font:inherit }
+    input:focus-visible,button:focus-visible { outline:3px solid #9dc6ff; outline-offset:2px }
+    .pair { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+    .check { display:flex; align-items:flex-start; gap:10px; margin:5px 0 21px }
+    .check input { width:19px; height:19px; margin:2px 0 0; accent-color:#8bb8ff }
+    .check label { margin:0 }
+    .actions { display:flex; gap:10px; flex-wrap:wrap }
+    button { border:1px solid #83baff; border-radius:7px; padding:10px 16px; background:#3976d3; color:#fff; font:inherit; font-weight:700; cursor:pointer }
+    button.secondary { background:#1d2c42 }
+    button:hover:not(:disabled) { filter:brightness(1.18) }
+    button:disabled { opacity:.45; cursor:not-allowed }
+    .output { background:#091221; color:#dbf4ea; border:1px solid #31465b; border-radius:8px; white-space:pre-wrap; overflow-wrap:anywhere; padding:18px; font:0.85rem/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; min-height:310px; max-height:570px; overflow:auto; }
+    .counter { float:right; color:#c4d2eb; font-size:.84rem }
+    .error { color:#ffb3b3; font-weight:600; min-height:1.5em; margin-bottom:6px }
+    .footer { font-size:.85rem; color:#b7c5da; margin-top:20px }
+    a { color:#9dc6ff }
+    @media(max-width:760px) { body { padding:20px 14px 40px } .layout { grid-template-columns:1fr } .panel { padding:18px } }
+    @media(max-width:430px) { .pair { grid-template-columns:1fr } .actions button { width:100% } }
+  </style>
+  <script src="./app.js" defer></script>
 </head>
 <body>
-
-    <div class="header">
-        <div class="header-title">
-            <h1>Patho Engine Synoptic</h1>
-            <p>Domain: Clinical & Cryptographic AI | Standard: CAP / CLSI / NIST Standards | LabMind-Atlas Architecture</p>
+  <header>
+    <div class="eyebrow">Pathology workflow · Local rule demonstration</div>
+    <h1>Patho Agent Synoptic</h1>
+    <p class="sub">Inspectable case-triage logic with immediate results and JSON export. Runs entirely in this browser.</p>
+  </header>
+  <aside class="info" aria-label="Scope and privacy warning">
+    <strong>Software demonstration — not clinical decision support</strong>
+    The numeric cutoffs (primary &gt;25; secondary &gt;12) and keyword triggers are illustrative, not validated CAP synoptic criteria.
+    No diagnosis, biomarker interpretation, CAP compliance check, or signed HMAC audit is performed.
+    <strong style="margin-top:9px">Use synthetic data only.</strong>
+    Inputs are evaluated locally; this page does not send inputs to an API or store them in browser storage.
+    Exported JSON is saved only when you choose Download.
+  </aside>
+  <main class="layout">
+    <section class="panel" aria-labelledby="form-title">
+      <h2 id="form-title">Evaluate a synthetic task</h2>
+      <form id="audit-form">
+        <div class="field">
+          <label for="task-id">Task ID</label>
+          <input id="task-id" name="task_id" value="DEMO-001" maxlength="120" required autocomplete="off">
         </div>
-        <div>
-            <span class="badge">Air-Gapped Active</span>
-            <span class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border-color: #10b981;">Zero-PHI Guard Active</span>
+        <div class="field">
+          <label for="target-id">Synthetic target identifier</label>
+          <input id="target-id" name="target_identifier" value="SPECIMEN-DEMO-01" maxlength="120" required autocomplete="off">
         </div>
-    </div>
-
-    <div class="metrics-bar">
-        <div class="metric-box">
-            <div class="metric-label">System Status</div>
-            <div class="metric-val" style="color: var(--success);" id="m-status">OPTIMAL</div>
+        <div class="pair">
+          <div class="field">
+            <label for="primary">Primary metric (unitless demo)</label>
+            <input id="primary" name="primary_metric" type="number" value="28.5" step="any" required>
+          </div>
+          <div class="field">
+            <label for="secondary">Secondary metric (unitless demo)</label>
+            <input id="secondary" name="secondary_metric" type="number" value="14.2" step="any" required>
+          </div>
         </div>
-        <div class="metric-box">
-            <div class="metric-label">Tasks Processed</div>
-            <div class="metric-val" id="m-tasks">142</div>
+        <div class="field">
+          <label for="status">Status descriptor</label>
+          <input id="status" name="status_descriptor" value="DISCORDANT" maxlength="300" autocomplete="off">
         </div>
-        <div class="metric-box">
-            <div class="metric-label">Audit Blocks Signed</div>
-            <div class="metric-val" id="m-audit">142</div>
+        <div class="check">
+          <input id="critical" name="is_critical_flag" type="checkbox">
+          <label for="critical">Set manual critical priority (for demonstration)</label>
         </div>
-        <div class="metric-box">
-            <div class="metric-label">PHI Interceptions</div>
-            <div class="metric-val" style="color: var(--accent);" id="m-phi">0</div>
+        <div role="alert" class="error" id="message"></div>
+        <div class="actions">
+          <button type="submit">Evaluate rules</button>
+          <button type="button" id="download" class="secondary" disabled>Download JSON</button>
         </div>
-    </div>
-
-    <div class="grid">
-        <div class="card">
-            <h2>⚙️ Dispatch Distributed Component Audit</h2>
-            <div class="form-group">
-                <label>Task / Sample ID</label>
-                <input type="text" id="task_id" value="TASK-2026-LIVE-01">
-            </div>
-            <div class="form-group">
-                <label>Target Identifier</label>
-                <input type="text" id="target_id" value="SPECIMEN-ALPHA-77">
-            </div>
-            <div class="form-group">
-                <label>Primary Measurement / Value</label>
-                <input type="number" id="primary_metric" value="29.4" step="0.1">
-            </div>
-            <div class="form-group">
-                <label>Secondary Metric / Kinetic Index</label>
-                <input type="number" id="secondary_metric" value="14.8" step="0.1">
-            </div>
-            <div class="form-group">
-                <label>Status / Phenotype Descriptor</label>
-                <input type="text" id="status_descriptor" value="DISCORDANT_ANOMALY">
-            </div>
-            <div class="form-group">
-                <label><input type="checkbox" id="is_critical" checked> Trigger Emergency / Critical Flag</label>
-            </div>
-            <button class="btn" onclick="runAudit()">Execute Distributed Component Audit</button>
-        </div>
-
-        <div class="card">
-            <h2>📊 Real-Time Consensus Dossier & Audit Log</h2>
-            <div class="terminal" id="outputConsole">// Patho Engine Synoptic Operations Console Ready
-// Connection established with Air-Gapped Supervisor
-// Cryptographic HMAC-SHA256 audit ledger loaded.
-// Ready for live task payload dispatch...</div>
-        </div>
-    </div>
-
-    <script>
-        async function runAudit() {
-            const consoleEl = document.getElementById('outputConsole');
-            consoleEl.innerText = "// Dispatching task across specialized workers...
-// Invoking InvariantQCWorker, SafetyEscalationWorker, ProtocolWorker...";
-
-            const payload = {
-                task_id: document.getElementById('task_id').value,
-                target_identifier: document.getElementById('target_id').value,
-                primary_metric: parseFloat(document.getElementById('primary_metric').value),
-                secondary_metric: parseFloat(document.getElementById('secondary_metric').value),
-                status_descriptor: document.getElementById('status_descriptor').value,
-                is_critical_flag: document.getElementById('is_critical').checked
-            };
-
-            try {
-                const res = await fetch('/api/audit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                consoleEl.innerText = JSON.stringify(data, null, 2);
-                document.getElementById('m-tasks').innerText = parseInt(document.getElementById('m-tasks').innerText) + 1;
-                document.getElementById('m-audit').innerText = parseInt(document.getElementById('m-audit').innerText) + 1;
-            } catch (err) {
-                consoleEl.innerText = "// Offline / Simulation Output:\n" + JSON.stringify({
-                    dossier_id: "DOSSIER-SIM-" + Math.floor(Math.random()*10000),
-                    system: "patho-engine-synoptic",
-                    domain: "Clinical & Cryptographic AI",
-                    task_id: payload.task_id,
-                    overall_urgency: payload.is_critical_flag ? "CRITICAL_STAT_PANIC" : "ELEVATED_RISK",
-                    integrity_status: "DISCORDANT_ANOMALY",
-                    alerts: [
-                        { worker: "InvariantQCWorker", alert: "Primary metric exceeds upper reference bound" },
-                        { worker: "SafetyEscalationWorker", alert: "Critical emergency interlock flag active" }
-                    ],
-                    audit_hash: "HMAC_SHA256_e83f9a72b941d6c381f9"
-                }, null, 2);
-            }
-        }
-    </script>
+      </form>
+    </section>
+    <section class="panel" aria-labelledby="result-title">
+      <span class="counter" aria-live="polite">Tasks evaluated: <span id="counter">0</span></span>
+      <h2 id="result-title">Result</h2>
+      <div class="output" id="output" role="status" aria-live="polite">No result. Enter synthetic values and select Evaluate rules.</div>
+      <p class="note" style="margin-top:15px">The result deliberately has no audit signature. Browser-only results cannot substantiate HMAC integrity.</p>
+    </section>
+  </main>
+  <footer class="footer">Source and backend instructions: <a href="https://github.com/abusuraihsakhri/patho-agent-synoptic">GitHub repository</a>. Local rule behavior is intentionally compatible with the repository's three demonstration workers.</footer>
 </body>
 </html>
