@@ -1,6 +1,6 @@
 """
 Tamper-Evident Audit Trail for Patho Agent Synoptic.
-HMAC-SHA256 secured logging with blockchain-anchored integrity verification.
+HMAC-SHA256 secured in-memory logging with hash-chain integrity checks.
 """
 import hashlib
 import hmac
@@ -72,16 +72,20 @@ class TamperEvidentAuditTrail:
         prev_hash = "GENESIS"
         for i, entry in enumerate(chain):
             expected_hash = entry.compute_hash(self.secret_key)
-            if entry.entry_hash != expected_hash:
+            if not hmac.compare_digest(entry.entry_hash, expected_hash):
                 return {"valid": False, "entries": len(chain), "failed_at": i, "message": f"Hash mismatch at sequence {i}"}
-            if entry.prev_hash != prev_hash:
+            if entry.prev_hash != prev_hash or entry.sequence != i:
                 return {"valid": False, "entries": len(chain), "failed_at": i, "message": f"Chain break at sequence {i}"}
             prev_hash = entry.entry_hash
 
+        if self.last_hashes.get(case_id) != prev_hash:
+            return {"valid": False, "entries": len(chain), "message": "Last hash does not match"}
         return {"valid": True, "entries": len(chain), "message": "Chain integrity verified"}
 
     def get_audit_log(self, case_id: str, limit: int = 100) -> List[dict]:
         chain = self.chains.get(case_id, [])
+        if limit <= 0:
+            return []
         entries = []
         for entry in chain[-limit:]:
             entries.append({
