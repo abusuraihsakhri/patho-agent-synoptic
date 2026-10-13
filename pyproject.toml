@@ -13,7 +13,6 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Topic :: Scientific/Engineering :: Medical Science Apps",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 requires-python = ">=3.9"
@@ -31,4 +30,4 @@ patho-engine-synoptic = "patho_agent_synoptic.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/abusuraihsakhri/patho-agent-synoptic"
-Repository = "https://github.com/abusuraihsakhri/patho-engine-synoptic.git"
+Repository = "https://github.com/abusuraihsakhri/patho-agent-synoptic.git"
