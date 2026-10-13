@@ -22,6 +22,15 @@ def test_audit_rejects_tampered_signed_field():
     assert not trail.verify_integrity()
 
 
+
+def test_audit_field_separator_substitution_is_detected():
+    trail = AuditTrail(secret_key="a-test-key-with-enough-entropy-for-tests")
+    trail.log("A|B", "C", "TASK_FINISHED", {"id": "SYNTH"})
+    trail.logs[0]["actor"] = "A"
+    trail.logs[0]["actor_tier"] = "B|C"
+    assert not trail.verify_integrity()
+
+
 def test_audit_rejects_tampered_final_hash():
     trail = AuditTrail(secret_key="a-test-key-with-enough-entropy-for-tests")
     trail.log("tester", "reviewer", "TASK_FINISHED", {"id": "SYNTH"})
