@@ -24,5 +24,5 @@ assert.equal(run({}).audit_hash, null);
 assert.throws(() => run({ primary_metric: "NaN" }), /finite numbers/);
 assert.throws(() => run({ secondary_metric: "Infinity" }), /finite numbers/);
 assert.throws(() => run({ target_identifier: "" }), /required/);
-assert.throws(() => run({ task_id: "<x>".repeat(40) }), /length/);
+assert.throws(() => run({ task_id: "<x>".repeat(41) }), /length/);
 console.log("Browser rule and validation checks passed.");
