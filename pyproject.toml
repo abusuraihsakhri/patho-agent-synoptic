@@ -7,7 +7,7 @@ name = "patho-engine-synoptic"
 version = "2.0.0"
 description = "Rule-based pathology workflow demonstration and case-triage utilities"
 readme = "README.md"
-authors = [{ name = "Dr. Abu Suraih Sakhri", email = "abusuraih@example.com" }]
+authors = [{ name = "Dr. Abu Suraih Sakhri" }]
 license = { text = "MIT" }
 classifiers = [
     "Programming Language :: Python :: 3",
